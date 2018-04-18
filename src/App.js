@@ -6,12 +6,6 @@ import { Link, Route } from 'react-router-dom'
 
 class BooksApp extends React.Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
     books: [],
     foundBooks: [],
     searchBookResults: [],
@@ -34,20 +28,25 @@ class BooksApp extends React.Component {
 
   search = (query) => {
     this.setState({ query: query.trim() })
-    BooksAPI.search(query).then((foundBooks) => {
-      if(foundBooks) {
-        foundBooks.map(fb => fb['shelf'] = 'none');
-        foundBooks.forEach(fb => {
-          this.state.books.forEach (b => {
-            if (fb.id === b.id) {
-              console.log(b['shelf']);
-              fb['shelf'] = b['shelf'];
-            }
-          })
-        });
-        this.setState( { searchBookResults: foundBooks })
-      }
-    })
+    if (query.trim() === "") {
+      this.setState({ searchBookResults: [] })
+    } else {
+      BooksAPI.search(query).then((foundBooks) => {
+        if (foundBooks["error"] === "empty query") {
+          this.setState({ searchBookResults: [] })
+        } else {
+          foundBooks.map(fb => fb['shelf'] = 'none');
+          foundBooks.forEach(fb => {
+            this.state.books.forEach (b => {
+              if (fb.id === b.id) {
+                fb['shelf'] = b['shelf'];
+              }
+            })
+          });
+          this.setState( { searchBookResults: foundBooks })
+        }
+      })
+    }
   }
 
   closeSearch = () => {
@@ -74,7 +73,7 @@ class BooksApp extends React.Component {
             value={this.query} onChange={(event) => this.search(event.target.value)}/>
           </div>
         </div>
-        <div className="search-books-results">
+          <div className="search-books-results">
           <ol className="books-grid">
             {this.state.searchBookResults.map((book) => (
               <li key={book.id}>
@@ -83,7 +82,7 @@ class BooksApp extends React.Component {
                       <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})`}}></div>
                       <div className="book-shelf-changer">
                       <select value={book.shelf} onChange={(event) => this.moveBook(book, event.target.value)} >
-                        <option value="none" disabled>Move to...</option>
+                        <option value="moveTo" disabled>Move to...</option>
                         <option value="currentlyReading">Currently Reading</option>
                         <option value="wantToRead">Want to Read</option>
                         <option value="read">Read</option>
@@ -93,7 +92,6 @@ class BooksApp extends React.Component {
                   </div>
                   <div className="book-title">{book.title}</div>
                   <div className="book-authors">{book.authors}</div>
-                  <div>Bookshelf: {book.shelf}</div>
                   </div>
               </li>
             ))}
