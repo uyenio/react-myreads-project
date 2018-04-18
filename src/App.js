@@ -1,7 +1,7 @@
 import React from 'react'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
-import Bookshelf from './Bookshelf';
+import ListBookshelves from './ListBookshelves';
 import { Link, Route } from 'react-router-dom'
 
 class BooksApp extends React.Component {
@@ -101,7 +101,7 @@ class BooksApp extends React.Component {
       )} />
       <Route exact path='/' render={() => (
         <div>
-          <Bookshelf books={this.state.books} moveBook={this.moveBook}/>
+          <ListBookshelves books={this.state.books} moveBook={this.moveBook}/>
           <div className="open-search">
             <Link to='/search'>Add a book</Link>
           </div>
