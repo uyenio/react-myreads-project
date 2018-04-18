@@ -1,7 +1,8 @@
 import React from 'react'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
-import ListBookshelves from './ListBookshelves';
+import ListBookshelves from './ListBookshelves'
+import Book from './Book'
 import { Link, Route } from 'react-router-dom'
 
 class BooksApp extends React.Component {
@@ -77,22 +78,7 @@ class BooksApp extends React.Component {
           <ol className="books-grid">
             {this.state.searchBookResults.map((book) => (
               <li key={book.id}>
-                  <div className="book">
-                  <div className="book-top">
-                      <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})`}}></div>
-                      <div className="book-shelf-changer">
-                      <select value={book.shelf} onChange={(event) => this.moveBook(book, event.target.value)} >
-                        <option value="moveTo" disabled>Move to...</option>
-                        <option value="currentlyReading">Currently Reading</option>
-                        <option value="wantToRead">Want to Read</option>
-                        <option value="read">Read</option>
-                        <option value="none">None</option>
-                      </select>
-                      </div>
-                  </div>
-                  <div className="book-title">{book.title}</div>
-                  <div className="book-authors">{book.authors}</div>
-                  </div>
+                <Book book={book} moveBook={this.moveBook}/>
               </li>
             ))}
           </ol>
@@ -108,7 +94,6 @@ class BooksApp extends React.Component {
        </div>
       )}/>
       </div>
-      
     )
   }
 }
